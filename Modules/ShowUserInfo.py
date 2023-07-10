@@ -19,7 +19,7 @@ def show_user_info(user_index):
             if user_info.find('"result":"success"') != -1:
                 break
             elif count == 5:
-                print("\033[93m[获取用户信息失败]\033[0m")
+                print('\033[1;93m' + '[获取用户信息失败]' + '\033[0m')
             time.sleep(0.01)
 
         json_user_info = json.loads(user_info)
@@ -31,10 +31,11 @@ def show_user_info(user_index):
         else:
             remaining_available_time = json_user_info.get("maxLeavingTime")
 
-        print("\033[92m[用户信息]\033[0m")
+        print('\033[1;92m' + '[用户信息]' + '\033[0m')
+
         print("校园网账号:", user_id)
         print("当前服务:", service_name)
         print("内网IP:", user_ip)
         print("剩余可用时长：", remaining_available_time)
     except requests.exceptions.ConnectionError:
-        print("\033[93m[获取用户信息失败]\033[0m 无法访问信息接口")
+        print('\033[1;93m' + '[获取用户信息失败]  无法访问信息接口' + '\033[0m')

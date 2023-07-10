@@ -15,11 +15,11 @@ def autologin():
     config.read("config.ini")
     # 请求前判断当前网络连接状态
     if check_network_connection_status() == 0:
-        print("\033[92m[无需登录]\033[0m 当前网络连接正常")
+        print('\033[1;92m' + '[无需登录]' + '\033[0m' + '当前网络连接正常')
         app_exit(3)
     else:
         try:
-            print("\033[93m[正在登录]\033[0m")
+            print('\033[1;93m' + '[正在登录]' + '\033[0m')
             # 给配置文件对应变量赋值
             userid = config.get("ACCOUNT", "user_id")
             password = config.get("ACCOUNT", "password")
@@ -62,20 +62,23 @@ def autologin():
                                                    proxies=proxies)
                 login_status = login_post_response.text.encode('raw_unicode_escape').decode()
                 if login_status.find('"result":"success"') != -1:
-                    print("\033[92m[登录成功]\033[0m")
+                    print('\033[1;92m' + '[登录成功]' + '\033[0m')
+
                     user_index = login_status[login_status.find("userIndex") + 12:login_status.find('","result"')]
                     return user_index
                 else:
                     if login_status.find('"message"'):
                         response_message = login_status[
                                            login_status.find('"message"') + 11: login_status.find('","forwordurl"')]
-                        print("\033[91m[登录失败]\033[0m {}".format(response_message))
+                        print('\033[1;91m' + '[登录失败]' + '\033[0m' + response_message)
+
                     else:
-                        print("\033[91m[登录失败]\033[0m 未知错误")
+                        print('\033[1;91m' + '[登录失败]' + '\033[0m' + ' 未知错误')
                     return -1
 
         except (configparser.NoSectionError, configparser.NoOptionError):
-            print("\r\033[91m[配置文件解析错误]\033[0m 请修改配置文件")
+            print('\r' + '\033[1;91m' + '[配置文件解析错误]' + '\033[0m' + ' 请修改配置文件')
+
             return -1
 
         # 内网通讯异常重试逻辑
@@ -87,12 +90,12 @@ def autologin():
                 countdown = 15
                 while countdown >= 0:
                     print(
-                        "\r\033[91m[内网通讯异常]\033[0m 向登录接口请求数据失败，请检查WLAN连接情况，程序将在 {} 秒后自动进行第 ({}/{}) 次重试".format(
+                        '\r' + '\033[1;91m' + '[内网通讯异常]' + '\033[0m' + '向登录接口请求数据失败，请检查WLAN连接情况，程序将在 {} 秒后自动进行第 ({}/{}) 次重试'.format(
                             countdown, retry_time1, max_attempts_allowed), end="")
                     time.sleep(1)
                     countdown = countdown - 1
-                print("\r正在进行第({}/{})次重试".format(retry_time1, max_attempts_allowed))
+                print("\r" + "正在进行第({}/{})次重试".format(retry_time1, max_attempts_allowed))
                 Modules.staticINFO.retry_time = retry_time1 + 1
                 return autologin()
-            print("\r\033[91m[已达到配置文件设定的最大重试次数]\033[0m")
+            print('\r' + '\033[1;91m' + '[已达到配置文件设定的最大重试次数]' + '\033[0m')
             return -1
